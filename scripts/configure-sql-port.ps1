@@ -12,7 +12,7 @@ echo "Configuring TCP port"
 # Set the port
 $smo = 'Microsoft.SqlServer.Management.Smo.'
 $wmi = new-object ($smo + 'Wmi.ManagedComputer')
-$uri = "ManagedComputer[@Name='WIN-2008R2-STD']/ ServerInstance[@Name='SQLEXPRESS']/ServerProtocol[@Name='Tcp']"
+$uri = "ManagedComputer[@Name='"+ (get-item env:\computername).Value+"']/ ServerInstance[@Name='SQLEXPRESS']/ServerProtocol[@Name='Tcp']"
 $Tcp = $wmi.GetSmoObject($uri)
 $wmi.GetSmoObject($uri + "/IPAddress[@Name='IPAll']").IPAddressProperties[1].Value="1433"
 $Tcp.alter()
@@ -23,3 +23,5 @@ echo "Restarting service..."
 # Restart service so that configurations are applied
 restart-service -f "SQL Server (SQLEXPRESS)"
 echo "DONE!"
+
+$wmi.GetSmoObject($uri + "/IPAddress[@Name='IPAll']").IPAddressProperties
